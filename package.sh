@@ -7,7 +7,7 @@ VERSION=$(/usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" Info.pl
 APP="/Applications/$NAME.app"
 DIST="dist"
 STAGE="$DIST/stage"
-DMG="$DIST/$NAME-$VERSION.dmg"
+DMG="$DIST/FuckBangs-$VERSION.dmg"
 
 if [ ! -d "$APP" ]; then
   echo "找不到 $APP，先跑 ./build.sh"
