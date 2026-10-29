@@ -69,7 +69,7 @@ final class AppSettings: ObservableObject {
 
 enum AppInfo {
     static let name = "干掉刘海"
-    static let version = "1.3.1"
+    static let version = "1.3.2"
     static let bundleID = "com.gripet.notchblack"
 }
 

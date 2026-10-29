@@ -23,7 +23,7 @@
 
 ## 安装
 
-从 Releases 下载 `FuckBangs-1.3.1.dmg`，拖进「应用程序」。
+从 Releases 下载 `FuckBangs-1.3.2.dmg`，拖进「应用程序」。
 
 首次打开会被 Gatekeeper 拦下（因为没有 Apple 开发者账号做公证）：
 
@@ -47,7 +47,7 @@ macOS 15 之后「右键 → 打开」的旧绕过方式已失效，只能用上
 
 ```bash
 ./build.sh     # 交叉编译 arm64 + x86_64，lipo 合并，安装到 /Applications
-./package.sh   # 生成 dist/FuckBangs-1.3.1.dmg
+./package.sh   # 生成 dist/FuckBangs-1.3.2.dmg
 ```
 
 重新生成图标：

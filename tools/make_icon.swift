@@ -1,5 +1,9 @@
 import AppKit
 
+// 干掉刘海 应用图标
+// 设计意图：一块屏幕，顶部被一条整宽的黑填平——表达"刘海被干掉"的结果，
+// 而不是"屏幕上有个刘海"。黑条足够厚，16px 下仍可辨认。
+
 let size = 1024
 let rep = NSBitmapImageRep(bitmapDataPlanes: nil,
                            pixelsWide: size, pixelsHigh: size,
@@ -11,48 +15,61 @@ NSGraphicsContext.saveGraphicsState()
 NSGraphicsContext.current = NSGraphicsContext(bitmapImageRep: rep)
 let ctx = NSGraphicsContext.current!.cgContext
 
-let body = CGRect(x: 96, y: 96, width: 832, height: 832)
-let squircle = CGPath(roundedRect: body, cornerWidth: 188, cornerHeight: 188, transform: nil)
+// 底板
+let body = CGRect(x: 88, y: 88, width: 848, height: 848)
+let squircle = CGPath(roundedRect: body, cornerWidth: 192, cornerHeight: 192, transform: nil)
 
 ctx.saveGState()
 ctx.addPath(squircle)
 ctx.clip()
-let colors = [NSColor(srgbRed: 0.984, green: 0.984, blue: 0.992, alpha: 1).cgColor,
-              NSColor(srgbRed: 0.882, green: 0.886, blue: 0.906, alpha: 1).cgColor] as CFArray
-let gradient = CGGradient(colorsSpace: CGColorSpaceCreateDeviceRGB(), colors: colors, locations: [0, 1])!
-ctx.drawLinearGradient(gradient,
-                       start: CGPoint(x: 512, y: 928),
-                       end: CGPoint(x: 512, y: 96),
+let bgColors = [NSColor(srgbRed: 0.988, green: 0.988, blue: 0.996, alpha: 1).cgColor,
+                NSColor(srgbRed: 0.898, green: 0.902, blue: 0.918, alpha: 1).cgColor] as CFArray
+let bgGradient = CGGradient(colorsSpace: CGColorSpaceCreateDeviceRGB(),
+                            colors: bgColors, locations: [0, 1])!
+ctx.drawLinearGradient(bgGradient,
+                       start: CGPoint(x: 512, y: 936),
+                       end: CGPoint(x: 512, y: 88),
                        options: [])
 ctx.restoreGState()
 
 ctx.addPath(squircle)
 ctx.setLineWidth(3)
-ctx.setStrokeColor(NSColor(srgbRed: 0.20, green: 0.20, blue: 0.24, alpha: 0.18).cgColor)
+ctx.setStrokeColor(NSColor(srgbRed: 0.18, green: 0.18, blue: 0.22, alpha: 0.16).cgColor)
 ctx.strokePath()
 
-let x0: CGFloat = 312, x1: CGFloat = 712
-let yTop: CGFloat = 928, yBot: CGFloat = 700
-let r: CGFloat = 64
+// 屏幕
+let screen = CGRect(x: 148, y: 210, width: 728, height: 604)
+let screenPath = CGPath(roundedRect: screen, cornerWidth: 56, cornerHeight: 56, transform: nil)
 
 ctx.saveGState()
-ctx.addPath(squircle)
-ctx.clip()
-
-
-let notch = CGMutablePath()
-notch.move(to: CGPoint(x: x0, y: yTop))
-notch.addLine(to: CGPoint(x: x0, y: yBot + r))
-notch.addQuadCurve(to: CGPoint(x: x0 + r, y: yBot), control: CGPoint(x: x0, y: yBot))
-notch.addLine(to: CGPoint(x: x1 - r, y: yBot))
-notch.addQuadCurve(to: CGPoint(x: x1, y: yBot + r), control: CGPoint(x: x1, y: yBot))
-notch.addLine(to: CGPoint(x: x1, y: yTop))
-notch.closeSubpath()
-
-ctx.addPath(notch)
-ctx.setFillColor(NSColor(srgbRed: 0.055, green: 0.055, blue: 0.066, alpha: 1).cgColor)
+ctx.setShadow(offset: CGSize(width: 0, height: -10),
+              blur: 34,
+              color: NSColor(srgbRed: 0.1, green: 0.1, blue: 0.2, alpha: 0.22).cgColor)
+ctx.addPath(screenPath)
+ctx.setFillColor(NSColor.white.cgColor)
 ctx.fillPath()
+ctx.restoreGState()
 
+// 屏幕里的壁纸（呼应真实使用场景的紫到橙）
+ctx.saveGState()
+ctx.addPath(screenPath)
+ctx.clip()
+let wpColors = [NSColor(srgbRed: 0.42, green: 0.28, blue: 0.52, alpha: 1).cgColor,
+                NSColor(srgbRed: 0.64, green: 0.30, blue: 0.42, alpha: 1).cgColor,
+                NSColor(srgbRed: 0.96, green: 0.47, blue: 0.18, alpha: 1).cgColor] as CFArray
+let wpGradient = CGGradient(colorsSpace: CGColorSpaceCreateDeviceRGB(),
+                            colors: wpColors, locations: [0, 0.55, 1])!
+ctx.drawLinearGradient(wpGradient,
+                       start: CGPoint(x: screen.midX, y: screen.maxY),
+                       end: CGPoint(x: screen.midX, y: screen.minY),
+                       options: [])
+
+// 顶部整宽黑条：刘海被填平
+let bandHeight: CGFloat = 196
+let band = CGRect(x: screen.minX, y: screen.maxY - bandHeight,
+                  width: screen.width, height: bandHeight)
+ctx.setFillColor(NSColor(srgbRed: 0.031, green: 0.031, blue: 0.039, alpha: 1).cgColor)
+ctx.fill(band)
 ctx.restoreGState()
 
 NSGraphicsContext.restoreGraphicsState()
